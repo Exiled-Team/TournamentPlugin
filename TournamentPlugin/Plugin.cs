@@ -29,9 +29,13 @@ namespace TournamentPlugin
         public List<string> StaffUserIds { get; } = new List<string>();
         public override void OnEnabled()
         {
+            Config.Zombieland.ParseTeams();
+            
             EventHandlers = new EventHandlers(this);
             Methods = new Methods(this);
 
+            Exiled.Events.Handlers.Server.ReloadedConfigs += OnConfigReloaded;
+            
             Exiled.Events.Handlers.Server.RespawningTeam += EventHandlers.OnRespawningTeam;
 
             base.OnEnabled();
@@ -39,12 +43,19 @@ namespace TournamentPlugin
 
         public override void OnDisabled()
         {
+            Exiled.Events.Handlers.Server.ReloadedConfigs -= OnConfigReloaded;
+            
             Exiled.Events.Handlers.Server.RespawningTeam -= EventHandlers.OnRespawningTeam;
             
             EventHandlers = null;
             Methods = null;
 
             base.OnDisabled();
+        }
+
+        public void OnConfigReloaded()
+        {
+            Config.Zombieland.ParseTeams();
         }
     }
 }
