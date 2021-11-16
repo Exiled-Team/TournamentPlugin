@@ -31,6 +31,7 @@ namespace TournamentPlugin
         {
             EventHandlers = new EventHandlers(this);
             Methods = new Methods(this);
+
             Exiled.Events.Handlers.Server.RespawningTeam += EventHandlers.OnRespawningTeam;
 
             base.OnEnabled();
@@ -38,6 +39,8 @@ namespace TournamentPlugin
 
         public override void OnDisabled()
         {
+            Exiled.Events.Handlers.Server.RespawningTeam -= EventHandlers.OnRespawningTeam;
+            
             EventHandlers = null;
             Methods = null;
 
