@@ -9,8 +9,8 @@ namespace TournamentPlugin.Zombieland
     using Exiled.CustomItems.API.Features;
     using Exiled.Loader;
     using MEC;
+    using TournamentPlugin.Components;
     using TournamentPlugin.Configs;
-    using TournamentPlugin.Zombieland.Components;
     using UnityEngine;
 
     public class Methods

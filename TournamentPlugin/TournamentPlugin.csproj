@@ -93,11 +93,15 @@
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\References\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\References\UnityEngine.PhysicsModule.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Commands\Staff\ActiveSpectatorCommand.cs" />
         <Compile Include="Commands\Staff\InactiveCommand.cs" />
         <Compile Include="Commands\Staff\StaffCommand.cs" />
+        <Compile Include="Components\TeleporterComponent.cs" />
         <Compile Include="Configs\Config.cs" />
         <Compile Include="Configs\TeleporterLink.cs" />
         <Compile Include="Configs\ZombielandConfig.cs" />
@@ -105,7 +109,6 @@
         <Compile Include="Methods.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Zombieland\Components\TeleporterComponent.cs" />
         <Compile Include="Zombieland\EventHandlers.cs" />
         <Compile Include="Zombieland\Methods.cs" />
     </ItemGroup>
