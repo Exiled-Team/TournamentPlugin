@@ -67,6 +67,7 @@ namespace TournamentPlugin.Configs
         [Description("The file path of a CSV file containing the bracket. The first (column names) row in this file is skipped. Each row in this bracket is a team, with the first column defining the match that the team will be playing in, and the second defining the team's number during that match. All subsequent columns define team user IDs, and any user IDs after the specififed number of team members become substitutes.")]
         public string Teams { get; set; } = Path.Combine(Paths.Configs, "zombieland.csv");
 
+        //matchID: {teamID: <playerID[], backupPlayerID[]>}
         private Dictionary<int, Dictionary<int, Tuple<string[], string[]>>> _parsedTeams = new Dictionary<int, Dictionary<int, Tuple<string[], string[]>>>();
 
         /// <summary>
@@ -144,6 +145,13 @@ namespace TournamentPlugin.Configs
             Log.Info("Successfully loaded teams.");
         }
 
+        /// <summary>
+        /// Gets the members of a team during a specific match.
+        /// </summary>
+        /// <param name="idx">the match ID</param>
+        /// <param name="team">the team ID</param>
+        /// <returns>A tuple, with the first item containing the player IDs, and the second containing the backup player IDs.</returns>
+        /// <exception cref="IndexOutOfRangeException">the match ID or the team ID does not exist.</exception>
         public Tuple<string[], string[]> GetTeam(int idx, int team)
         {
             if (!_parsedTeams.ContainsKey(idx))
@@ -157,6 +165,39 @@ namespace TournamentPlugin.Configs
             }
 
             return _parsedTeams[idx][team];
+        }
+
+        /// <summary>
+        /// Gets the members of a team during a specific match in player form. This should only be ran when the players are actually needed.
+        /// </summary>
+        /// <param name="idx">the match ID</param>
+        /// <param name="team">the team ID</param>
+        /// <returns>An array of players.</returns>
+        /// <exception cref="IndexOutOfRangeException">the match ID or the team ID does not exist.</exception>
+        public Player[] GetTeamMembers(int idx, int team)
+        {
+            var ids = GetTeam(idx, team);
+            var players = new List<Player>();
+
+            //Get the main players.
+            foreach (var player in Player.List)
+            {
+                if(ids.Item1.Contains(player.RawUserId)) players.Add(player);
+            }
+            
+            //If all of the players are here, return.
+            if (players.Count >= ids.Item1.Length) return players.ToArray();
+            
+            //Get the backup players.
+            foreach (var player in Player.List)
+            {
+                if(ids.Item2.Contains(player.RawUserId)) players.Add(player);
+                
+                //If we have enough players, return.
+                if (players.Count >= ids.Item1.Length) return players.ToArray();
+            }
+
+            return players.ToArray();
         }
     }
 }
