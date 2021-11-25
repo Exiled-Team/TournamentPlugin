@@ -23,11 +23,11 @@ namespace TournamentPlugin.Zombieland
 
         public void OnPlayerChangingRole(ChangingRoleEventArgs ev)
         {
-            if (ev.NewRole == RoleType.Scp0492)
+            if (ev.NewRole.GetSide() == Side.Scp)
             {
                 _methods.SetupZombie(ev.Player);
             }
-            else if (ev.NewRole != RoleType.Spectator && ev.NewRole.GetSide() != Side.Scp)
+            else if (ev.NewRole != RoleType.Spectator)
             {
                 _methods.SetupHuman(ev.Player);
             }

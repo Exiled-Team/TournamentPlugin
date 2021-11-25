@@ -106,6 +106,8 @@
         <Compile Include="Configs\TeleporterLink.cs" />
         <Compile Include="Configs\ZombielandConfig.cs" />
         <Compile Include="EventHandlers.cs" />
+        <Compile Include="Massacre\EventHandlers.cs" />
+        <Compile Include="Massacre\Methods.cs" />
         <Compile Include="Methods.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
