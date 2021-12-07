@@ -2,6 +2,7 @@ namespace TournamentPlugin.Zombieland
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Features.Items;
@@ -9,6 +10,7 @@ namespace TournamentPlugin.Zombieland
     using Exiled.CustomItems.API.Features;
     using Exiled.Loader;
     using MEC;
+    using NorthwoodLib.Pools;
     using TournamentPlugin.Components;
     using TournamentPlugin.Configs;
     using UnityEngine;
@@ -20,13 +22,42 @@ namespace TournamentPlugin.Zombieland
         public EventHandlers EventHandlers { get; private set; }
         public CoroutineHandle Coroutine { get; private set; }
 
-        public void StartMatch()
+        public void StartMatch(int matchIndex, int teamCount = 5)
         {
             if (EventHandlers != null)
                 UnRegisterEvents();
             RegisterEvents();
             Coroutine = Timing.RunCoroutine(SpawnItems());
+            _plugin.ActivePlayers.Clear();
             SpawnTeleporters();
+            List<Player[]> teams = ListPool<Player[]>.Shared.Rent();
+            for (int i = 0; i < teamCount; i++)
+            {
+                teams.Add(_plugin.Config.Zombieland.GetTeamMembers(matchIndex, i));
+            }
+
+            List<RoleType> unUsedRoles = ListPool<RoleType>.Shared.Rent();
+            unUsedRoles.Add(RoleType.FacilityGuard);
+            unUsedRoles.Add(RoleType.ClassD);
+            unUsedRoles.Add(RoleType.NtfCaptain);
+            unUsedRoles.Add(RoleType.ChaosRifleman);
+            unUsedRoles.Add(RoleType.Scientist);
+            
+            foreach (Player[] team in teams)
+            {
+                RoleType type = unUsedRoles[Loader.Random.Next(unUsedRoles.Count)];
+                
+                if (!_plugin.ActivePlayers.ContainsKey(type))
+                    _plugin.ActivePlayers[type] = new List<Player>();
+                
+                foreach (Player player in team)
+                {
+                    player.SetRole(type);
+                    _plugin.ActivePlayers[type].Add(player);
+                }
+            }
+
+            ListPool<RoleType>.Shared.Return(unUsedRoles);
         }
 
         public void RegisterEvents()
@@ -108,8 +139,8 @@ namespace TournamentPlugin.Zombieland
         {
             Timing.CallDelayed(0.25f, () =>
             {
-                player.Health = _plugin.Config.Zombieland.HumanHealth;
                 player.ClearInventory();
+                player.Health = _plugin.Config.Zombieland.HumanHealth;
 
                 foreach (string itemName in _plugin.Config.Zombieland.HumanInventory)
                 {
