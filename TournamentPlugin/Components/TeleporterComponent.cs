@@ -13,6 +13,9 @@ namespace TournamentPlugin.Components
         private void OnCollisionEnter(Collision other)
         {
             Player player = Player.Get(other.gameObject);
+            if (player == null)
+                return;
+
             Timing.CallDelayed(1.5f, () =>
             {
                 if ((player.Position - position).sqrMagnitude < 9f)
