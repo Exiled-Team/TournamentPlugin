@@ -8,6 +8,7 @@ namespace TournamentPlugin.Zombieland
     using Exiled.API.Features.Items;
     using Exiled.API.Features.Spawn;
     using Exiled.CustomItems.API.Features;
+    using Exiled.CustomRoles.API.Features;
     using Exiled.Loader;
     using MEC;
     using NorthwoodLib.Pools;
@@ -103,7 +104,7 @@ namespace TournamentPlugin.Zombieland
             {
                 foreach (string itemName in _plugin.Config.Zombieland.SpawnableItems)
                 {
-                    foreach (SpawnPoint point in _plugin.Config.Zombieland.ItemSpawnPoints)
+                    foreach (SpawnPoint point in _plugin.Config.Zombieland.ItemSpawnPoints.RoleSpawnPoints)
                         if (point.Chance <= Loader.Random.Next(100))
                         {
                             if (Enum.TryParse(itemName, true, out ItemType type))
@@ -119,11 +120,29 @@ namespace TournamentPlugin.Zombieland
             }
         }
 
+        private List<string> _zombieRoles = new List<string>
+        {
+            "Charger Zombie",
+            "Berserk Zombie",
+            "Ballistic Zombie",
+            "Dwarf Zombie",
+        };
+        
         public void RespawnZombie(Player player)
         {
             Timing.CallDelayed(player.RemoteAdminAccess ? 25f : 40f, () =>
             {
                 player.Role = RoleType.Scp0492;
+
+                if (player.RemoteAdminAccess) 
+                    return;
+
+                Timing.CallDelayed(0.15f, () =>
+                {
+                    CustomRole role = CustomRole.Get(_zombieRoles[Loader.Random.Next(_zombieRoles.Count)]);
+                    if (role != null && Loader.Random.Next(100) > 60)
+                        role.AddRole(player);
+                });
             });
         }
         

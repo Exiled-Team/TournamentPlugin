@@ -20,7 +20,7 @@ namespace TournamentPlugin.Zombieland
 
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (_plugin.StaffUserIds.Contains(ev.Target.UserId) || ev.Killer.IsHuman)
+            if (_plugin.StaffUserIds.Contains(ev.Target.UserId) || ev.Killer != null && ev.Killer.IsHuman)
                 _methods.RespawnZombie(ev.Target);
         }
 

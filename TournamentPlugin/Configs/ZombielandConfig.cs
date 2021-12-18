@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.API.Features.Spawn;
 
 namespace TournamentPlugin.Configs
 {
+    using UnityEngine;
+
     public class ZombielandConfig
     {
         public float ZombieHealth { get; set; } = 900f;
@@ -42,12 +43,16 @@ namespace TournamentPlugin.Configs
             }
         };
 
-        public List<SpawnPoint> ItemSpawnPoints { get; set; } = new List<SpawnPoint>
+        public SpawnProperties ItemSpawnPoints { get; set; } = new SpawnProperties
         {
-            new RoleSpawnPoint
+            Limit = 100,
+            RoleSpawnPoints = new List<RoleSpawnPoint>
             {
-                Role = RoleType.ChaosConscript,
-                Chance = 100,
+                new RoleSpawnPoint
+                {
+                    Role = RoleType.ChaosConscript,
+                    Chance = 100,
+                }
             }
         };
 
@@ -62,7 +67,7 @@ namespace TournamentPlugin.Configs
         public List<TeleporterLink> TeleporterLinks { get; set; } = new List<TeleporterLink>();
 
         [Description("The amount of players in each team.")]
-        public int Players { get; set; } = 20;
+        public int Players { get; set; } = 3;
         
         [Description("The file path of a CSV file containing the bracket. The first (column names) row in this file is skipped. Each row in this bracket is a team, with the first column defining the match that the team will be playing in, and the second defining the team's number during that match. All subsequent columns define team user IDs, and any user IDs after the specififed number of team members become substitutes.")]
         public string Teams { get; set; } = Path.Combine(Paths.Configs, "zombieland.csv");
